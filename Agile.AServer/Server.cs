@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Agile.AServer.utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +25,9 @@ namespace Agile.AServer
 
     public class Server : IServer
     {
-        private IDictionary<string, HttpHandler> _handlers = new Dictionary<string, HttpHandler>();
+        private static object _lockObj = new object();
+        private readonly List<HttpHandler> _handlers = new List<HttpHandler>();
+        private readonly ConcurrentDictionary<string, HttpHandler> _handlersCache = new ConcurrentDictionary<string, HttpHandler>();
         private int _port = 5000;
 
         public IWebHost Host { get; private set; }
@@ -45,16 +50,26 @@ namespace Agile.AServer
                         {
                             var req = http.Request;
                             var resp = http.Response;
-
+                            var method = http.Request.Method;
                             var path = req.Path;
 
-                            _handlers.TryGetValue(path.Value.ToLower(), out HttpHandler handler);
+                            var cacheKey = $"{method}-{path}";
+
+                            _handlersCache.TryGetValue(cacheKey, out HttpHandler handler);
+                            if (handler == null)
+                            {
+                                handler = _handlers.FirstOrDefault(h => h.Method == method && PathUtil.IsMatch(path, h.Path));
+                                if (handler != null)
+                                {
+                                    _handlersCache.TryAdd(cacheKey, handler);
+                                }
+                            }
+
                             if (handler != null)
                             {
                                 try
                                 {
-                                    var result = handler.Handler(req, resp);
-                                    return resp.WriteAsync(result);
+                                    return handler.Handler(new Request(req, handler.Path), new Response(resp));
                                 }
                                 catch (Exception e)
                                 {
@@ -83,6 +98,10 @@ namespace Agile.AServer
             {
                 throw new ArgumentNullException(nameof(handler));
             }
+            if (string.IsNullOrEmpty(handler.Method))
+            {
+                throw new ArgumentNullException("handler.Method");
+            }
             if (string.IsNullOrEmpty(handler.Path))
             {
                 throw new ArgumentNullException("handler.Path");
@@ -92,13 +111,23 @@ namespace Agile.AServer
                 throw new ArgumentNullException("handler.Handler");
             }
 
-            if (!_handlers.TryAdd(handler.Path.ToLower(), handler))
+            if (_handlers.Any(h => h.Path.Equals(handler.Path, StringComparison.CurrentCultureIgnoreCase) &&
+                                   h.Method == handler.Method))
             {
                 throw new Exception($"request path:{handler.Path} only can be set 1 handler");
+            }
+            else
+            {
+                lock (_lockObj)
+                {
+                    _handlers.Add(handler);
+                }
             }
 
             return this;
         }
+
+
 
         public Task Stop()
         {
