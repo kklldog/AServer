@@ -53,7 +53,9 @@ namespace Agile.AServer
                             var method = http.Request.Method;
                             var path = req.Path;
 
-                            var cacheKey = $"{method}-{path}";
+                            var cacheKey = $"Request:{method}-{path}";
+
+                            ConsoleUtil.WriteToConsole(cacheKey);
 
                             _handlersCache.TryGetValue(cacheKey, out HttpHandler handler);
                             if (handler == null)
@@ -74,13 +76,16 @@ namespace Agile.AServer
                                 catch (Exception e)
                                 {
                                     Console.WriteLine(e);
-
                                     resp.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                    ConsoleUtil.WriteToConsole($"Response:{resp.StatusCode} {HttpStatusCode.InternalServerError}");
+
                                     return resp.WriteAsync("InternalServerError");
                                 }
                             }
 
                             resp.StatusCode = (int)HttpStatusCode.NotFound;
+                            ConsoleUtil.WriteToConsole($"Response:{resp.StatusCode} {HttpStatusCode.NotFound}");
+
                             return resp.WriteAsync("NotFound");
                         });
                     })
@@ -114,7 +119,7 @@ namespace Agile.AServer
             if (_handlers.Any(h => h.Path.Equals(handler.Path, StringComparison.CurrentCultureIgnoreCase) &&
                                    h.Method == handler.Method))
             {
-                throw new Exception($"request path:{handler.Path} only can be set 1 handler");
+                throw new Exception($"{handler.Method} {handler.Path} only can be set 1 handler");
             }
             else
             {

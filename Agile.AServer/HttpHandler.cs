@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Agile.AServer.utils;
@@ -102,9 +103,9 @@ namespace Agile.AServer
             HttpResponse.Headers.Add(key, value);
         }
 
-        public Task Write(string responseContent, List<KeyValuePair<string, string>> headers)
+        public Task Write(string responseContent, HttpStatusCode statusCode, List<KeyValuePair<string, string>> headers)
         {
-            HttpResponse.Headers.Add("Content-Type", "text/html");
+            HttpResponse.StatusCode = (int)statusCode;
             headers.ForEach(h =>
             {
                 if (HttpResponse.Headers.Any(h1 => h1.Key == h.Key))
@@ -118,20 +119,27 @@ namespace Agile.AServer
                     HttpResponse.Headers.Add(h.Key, h.Value);
                 }
             });
+
+            ConsoleUtil.WriteToConsole($"Response:{HttpResponse.StatusCode} {statusCode}");
+
             return HttpResponse.WriteAsync(responseContent);
         }
 
 
         public Task Write(string responseContent, string contentType = "text/html")
         {
-            HttpResponse.Headers.Add("Content-Type", contentType);
-            return HttpResponse.WriteAsync(responseContent);
+            return Write(responseContent, HttpStatusCode.OK, new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>("Content-Type",contentType)
+            });
         }
 
         public Task WriteJson(string responseContent)
         {
-            HttpResponse.Headers.Add("Content-Type", "application/json");
-            return HttpResponse.WriteAsync(responseContent);
+            return Write(responseContent, HttpStatusCode.OK, new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>("Content-Type","application/json")
+            });
         }
     }
 

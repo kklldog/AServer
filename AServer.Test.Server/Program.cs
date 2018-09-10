@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Agile.AServer;
 using Newtonsoft.Json;
@@ -67,9 +68,9 @@ namespace AServer.Test.Server
                         Path = "/api/user/:id",
                         Handler = (req, resp) =>
                         {
-                            var headers = new List<KeyValuePair<string,string>>();
+                            var headers = new List<KeyValuePair<string, string>>();
                             headers.Add(new KeyValuePair<string, string>("Content-Type", "charset=utf-8"));
-                            return resp.Write($"user {req.Params.id} be deleted .", headers);
+                            return resp.Write($"user {req.Params.id} be deleted .", HttpStatusCode.OK, headers);
                         }
                     })
                     .AddHandler(new HttpHandler()
