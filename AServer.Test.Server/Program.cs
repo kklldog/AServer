@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Agile.AServer;
 using Newtonsoft.Json;
@@ -58,6 +59,17 @@ namespace AServer.Test.Server
                         Handler = (req, resp) =>
                         {
                             return resp.Write(req.BodyContent);
+                        }
+                    })
+                    .AddHandler(new HttpHandler()
+                    {
+                        Method = "DELETE",
+                        Path = "/api/user/:id",
+                        Handler = (req, resp) =>
+                        {
+                            var headers = new List<KeyValuePair<string,string>>();
+                            headers.Add(new KeyValuePair<string, string>("Content-Type", "charset=utf-8"));
+                            return resp.Write($"user {req.Params.id} be deleted .", headers);
                         }
                     })
                     .AddHandler(new HttpHandler()

@@ -102,6 +102,26 @@ namespace Agile.AServer
             HttpResponse.Headers.Add(key, value);
         }
 
+        public Task Write(string responseContent, List<KeyValuePair<string, string>> headers)
+        {
+            HttpResponse.Headers.Add("Content-Type", "text/html");
+            headers.ForEach(h =>
+            {
+                if (HttpResponse.Headers.Any(h1 => h1.Key == h.Key))
+                {
+                    var value = HttpResponse.Headers[h.Key];
+                    value += "; " + h.Value;
+                    HttpResponse.Headers[h.Key] = value;
+                }
+                else
+                {
+                    HttpResponse.Headers.Add(h.Key, h.Value);
+                }
+            });
+            return HttpResponse.WriteAsync(responseContent);
+        }
+
+
         public Task Write(string responseContent, string contentType = "text/html")
         {
             HttpResponse.Headers.Add("Content-Type", contentType);
