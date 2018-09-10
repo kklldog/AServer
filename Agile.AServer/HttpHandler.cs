@@ -36,7 +36,7 @@ namespace Agile.AServer
         {
             get
             {
-                if (string.IsNullOrEmpty(_bodyContent))
+                if (!string.IsNullOrEmpty(_bodyContent))
                 {
                     return _bodyContent;
                 }
