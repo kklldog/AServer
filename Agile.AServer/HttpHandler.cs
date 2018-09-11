@@ -106,7 +106,7 @@ namespace Agile.AServer
         public Task Write(string responseContent, HttpStatusCode statusCode, List<KeyValuePair<string, string>> headers)
         {
             HttpResponse.StatusCode = (int)statusCode;
-            headers.ForEach(h =>
+            headers?.ForEach(h =>
             {
                 if (HttpResponse.Headers.Any(h1 => h1.Key == h.Key))
                 {

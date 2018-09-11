@@ -10,18 +10,23 @@ namespace Agile.AServer.utils
     {
         public static dynamic ToDynamic(this IDictionary dictionary)
         {
-            IDictionary<string,object> dy = new ExpandoObject();
+            IDictionary<string, object> dy = new ExpandoObject();
             foreach (object key in dictionary.Keys)
             {
                 var val = dictionary[key];
                 var dyPropName = key.ToString();
                 if (!dy.ContainsKey(dyPropName))
                 {
-                    dy.Add(dyPropName,val);
+                    dy.Add(dyPropName, val);
                 }
             }
 
-            return (ExpandoObject) dy;
+            return (ExpandoObject)dy;
+        }
+
+        public static void LoadController<T>(this IServer server) where T : HttpHandlerController
+        {
+            ControllerManager.Load<T>(server);
         }
     }
 }

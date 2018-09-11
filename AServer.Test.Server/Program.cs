@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Agile.AServer;
+using Agile.AServer.utils;
 using Newtonsoft.Json;
 
 namespace AServer.Test.Server
@@ -81,7 +82,8 @@ namespace AServer.Test.Server
                         {
                             throw new Exception("ex");
                         }
-                    });
+                    })
+                    .LoadController<ApiController>();
                 await server.Run();
             });
 
