@@ -1,7 +1,7 @@
 using Agile.AServer.utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Agile.AServer.TestCases
+namespace AServer.Test.TestCases
 {
     [TestClass]
     public class PathUtilTests

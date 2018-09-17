@@ -29,12 +29,23 @@ namespace Agile.AServer
         private readonly List<HttpHandler> _handlers = new List<HttpHandler>();
         private readonly ConcurrentDictionary<string, HttpHandler> _handlersCache = new ConcurrentDictionary<string, HttpHandler>();
         private int _port = 5000;
+        private string _ip = "localhost";
 
         public IWebHost Host { get; private set; }
 
         public IServer SetPort(int port)
         {
-            _port = 5000;
+            _port = port;
+
+            return this;
+        }
+
+        public IServer SetIP(string ip)
+        {
+            if (!string.IsNullOrEmpty(ip))
+            {
+                _ip = ip;
+            }
 
             return this;
         }
@@ -43,56 +54,67 @@ namespace Agile.AServer
         {
             Host =
                 new WebHostBuilder()
-                    .UseKestrel(op => op.ListenAnyIP(_port))
+                    .UseKestrel(op =>
+                    {
+                        if (_ip.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            op.ListenLocalhost(_port);
+                        }
+                    })
                     .Configure(app =>
                     {
-                        app.Run(http =>
+                        app.Run( http =>
                         {
-                            var req = http.Request;
-                            var resp = http.Response;
-                            var method = http.Request.Method;
-                            var path = req.Path;
-
-                            var cacheKey = $"Request:{method}-{path}";
-
-                            ConsoleUtil.WriteToConsole(cacheKey);
-
-                            _handlersCache.TryGetValue(cacheKey, out HttpHandler handler);
-                            if (handler == null)
+                            return Task.Run( () =>
                             {
-                                handler = _handlers.FirstOrDefault(h => h.Method == method && PathUtil.IsMatch(path, h.Path));
+                                var req = http.Request;
+                                var resp = http.Response;
+                                var method = http.Request.Method;
+                                var path = req.Path;
+
+                                var cacheKey = $"Request:{method}-{path}";
+
+                                ConsoleUtil.WriteToConsole(cacheKey);
+
+                                _handlersCache.TryGetValue(cacheKey, out HttpHandler handler);
+                                if (handler == null)
+                                {
+                                    handler = _handlers.FirstOrDefault(
+                                        h => h.Method == method && PathUtil.IsMatch(path, h.Path));
+                                    if (handler != null)
+                                    {
+                                        _handlersCache.TryAdd(cacheKey, handler);
+                                    }
+                                }
+
                                 if (handler != null)
                                 {
-                                    _handlersCache.TryAdd(cacheKey, handler);
+                                    try
+                                    {
+                                        return handler.Handler(new Request(req, handler.Path), new Response(resp));
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        ConsoleUtil.WriteToConsole(e.ToString());
+                                        resp.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                        ConsoleUtil.WriteToConsole(
+                                            $"Response:{resp.StatusCode} {HttpStatusCode.InternalServerError}");
+
+                                        return resp.WriteAsync("InternalServerError");
+                                    }
                                 }
-                            }
 
-                            if (handler != null)
-                            {
-                                try
-                                {
-                                    return handler.Handler(new Request(req, handler.Path), new Response(resp));
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e);
-                                    resp.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                    ConsoleUtil.WriteToConsole($"Response:{resp.StatusCode} {HttpStatusCode.InternalServerError}");
+                                resp.StatusCode = (int)HttpStatusCode.NotFound;
+                                ConsoleUtil.WriteToConsole($"Response:{resp.StatusCode} {HttpStatusCode.NotFound}");
 
-                                    return resp.WriteAsync("InternalServerError");
-                                }
-                            }
-
-                            resp.StatusCode = (int)HttpStatusCode.NotFound;
-                            ConsoleUtil.WriteToConsole($"Response:{resp.StatusCode} {HttpStatusCode.NotFound}");
-
-                            return resp.WriteAsync("NotFound");
+                                return resp.WriteAsync("NotFound");
+                            });
                         });
                     })
                     .Build();
             var task = Host.StartAsync();
 
-            Console.WriteLine("AServer listen http requests now .");
+            Console.WriteLine($"AServer listening {_ip}:{_port} now .");
 
             return task;
         }

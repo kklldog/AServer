@@ -24,7 +24,7 @@ namespace Agile.AServer.utils
             return (ExpandoObject)dy;
         }
 
-        public static void LoadController<T>(this IServer server) where T : HttpHandlerController
+        public static void AddController<T>(this IServer server) where T : HttpHandlerController
         {
             ControllerManager.Load<T>(server);
         }

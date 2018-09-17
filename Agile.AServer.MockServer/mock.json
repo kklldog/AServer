@@ -1,0 +1,91 @@
+{
+  "host":"localhost:8080",
+  "apis": [
+    {
+      "method": "GET",
+      "url": "/api/user/001",
+      "response": {
+        "result": {
+          "name": "mj.zhou",
+          "sex": 0,
+          "addres": "suzhou china",
+          "age": 33,
+          "phone": 13919313131
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "statusCode": 200
+      }
+    },
+    {
+      "method": "GET",
+      "url": "/api/user",
+      "response": {
+        "result": [
+          {
+            "id": "001",
+            "name": "mj.zhou",
+            "sex": 0,
+            "addres": "suzhou china",
+            "age": 33,
+            "phone": 13919313131
+          },
+          {
+            "id": "002",
+            "name": "xiao min",
+            "sex": 0,
+            "addres": "suzhou china",
+            "age": 31,
+            "phone": 1390000000
+          },
+          {
+            "id": "003",
+            "name": "xiao hong",
+            "sex": 1,
+            "addres": "suzhou china",
+            "age": 32,
+            "phone": 1590000000
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "statusCode": 200
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/api/user",
+      "response": {
+        "result": "ok",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "statusCode": 200
+      }
+    },
+    {
+      "method": "PUT",
+      "url": "/api/user/002",
+      "response": {
+        "result": "ok",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "statusCode": 200
+      }
+    },
+    {
+      "method": "DELETE",
+      "url": "/api/user/003",
+      "response": {
+        "result": "ok",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "statusCode": 200
+      }
+    }
+  ]
+}

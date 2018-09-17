@@ -83,7 +83,7 @@ namespace AServer.Test.Server
                             throw new Exception("ex");
                         }
                     })
-                    .LoadController<ApiController>();
+                    .AddController<ApiController>();
                 await server.Run();
             });
 
