@@ -60,6 +60,10 @@ namespace Agile.AServer
                         {
                             op.ListenLocalhost(_port);
                         }
+                        else
+                        {
+                            op.Listen(IPAddress.Parse(_ip),_port);
+                        }
                     })
                     .Configure(app =>
                     {
