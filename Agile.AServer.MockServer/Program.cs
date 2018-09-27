@@ -44,7 +44,13 @@ namespace Agile.AServer.MockServer
                         }
                         server
                             .SetIP(ip)
-                            .SetPort(port);
+                            .SetPort(port)
+                            .EnableCors(new CorsOption()
+                            {
+                                AccessControlAllowOrigins = "*",
+                                AccessControlAllowHeaders = "auth",
+                                AccessControlAllowMethods = "GET,POST,PUT,DELETE"
+                            });
                         //解析apis
                         foreach (dynamic apiDesc in dynamicMockObj.apis)
                         {

@@ -8,15 +8,19 @@ using Agile.AServer.utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace Agile.AServer
 {
     public interface IServer
     {
+        IServer SetIP(string ip);
         IServer SetPort(int port);
         IWebHost Host { get; }
 
         IServer AddHandler(HttpHandler handler);
+
+        IServer EnableCors(CorsOption option);
 
         Task Run();
 
@@ -30,6 +34,7 @@ namespace Agile.AServer
         private readonly ConcurrentDictionary<string, HttpHandler> _handlersCache = new ConcurrentDictionary<string, HttpHandler>();
         private int _port = 5000;
         private string _ip = "localhost";
+        private CorsOption _corsOption;
 
         public IWebHost Host { get; private set; }
 
@@ -50,6 +55,15 @@ namespace Agile.AServer
             return this;
         }
 
+        public IServer EnableCors(CorsOption option)
+        {
+            _corsOption = option;
+
+            return this;
+        }
+
+       
+
         public Task Run()
         {
             Host =
@@ -62,14 +76,15 @@ namespace Agile.AServer
                         }
                         else
                         {
-                            op.Listen(IPAddress.Parse(_ip),_port);
+                            op.Listen(IPAddress.Parse(_ip), _port);
                         }
                     })
                     .Configure(app =>
                     {
-                        app.Run( http =>
+                        app.Run(http =>
                         {
-                            return Task.Run( () =>
+
+                            return Task.Run(() =>
                             {
                                 var req = http.Request;
                                 var resp = http.Response;
@@ -77,8 +92,14 @@ namespace Agile.AServer
                                 var path = req.Path;
 
                                 var cacheKey = $"Request:{method}-{path}";
-
                                 ConsoleUtil.WriteToConsole(cacheKey);
+
+                                //cors
+                                var corsResult = CorsHandler.Handler(_corsOption, http);
+                                if (corsResult != null)
+                                {
+                                    return corsResult;
+                                }
 
                                 _handlersCache.TryGetValue(cacheKey, out HttpHandler handler);
                                 if (handler == null)
@@ -118,7 +139,7 @@ namespace Agile.AServer
                     .Build();
             var task = Host.StartAsync();
 
-            Console.WriteLine($"AServer listening {_ip}:{_port} now .");
+            ConsoleUtil.WriteToConsole($"AServer listening {_ip}:{_port} now .");
 
             return task;
         }

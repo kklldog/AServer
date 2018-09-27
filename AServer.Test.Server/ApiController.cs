@@ -13,6 +13,7 @@ namespace AServer.Test.Server
     {
         public class car
         {
+            public string id { get; set; }
             public string name { get; set; }
         }
 
@@ -34,8 +35,8 @@ namespace AServer.Test.Server
             var name = req.Params.name;
 
             List<car> cars = new List<car>();
-            cars.Add(new car { name = "ae86" });
-            cars.Add(new car { name = "911" });
+            cars.Add(new car { id="001", name = "ae86" });
+            cars.Add(new car { id="002",name = "911" });
 
             var car = cars.FirstOrDefault(c => c.name == name);
             if (car != null)
@@ -47,6 +48,33 @@ namespace AServer.Test.Server
             {
                 return resp.Write("NotFound", HttpStatusCode.NotFound, null);
             }
+        }
+
+        [HttpHandler("/api/cars","POST")]
+        public Task AddCar(Request req, Response resp)
+        {
+            var car = req.Body<car>();
+            //mock return id
+            var json = JsonConvert.SerializeObject(car);
+            return resp.WriteJson(json);
+        }
+
+        [HttpHandler("/api/cars/001", "PUT")]
+        public Task UpdateCar(Request req, Response resp)
+        {
+            var car = req.Body<car>();
+            //mock return id
+            var json = JsonConvert.SerializeObject(car);
+            return resp.WriteJson(json);
+        }
+
+        [HttpHandler("/api/cars/001","DELETE")]
+        public Task DeleteCar(Request req, Response resp)
+        {
+            //delete car
+            //...
+
+            return resp.WriteJson("ok");
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Agile.AServer.utils;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace Agile.AServer
 {
@@ -30,7 +31,7 @@ namespace Agile.AServer
         private dynamic _header;
         public dynamic Header => _header ?? (_header = DynamicHeader());
 
-        public Stream Body => HttpRequest.Body;
+        public Stream BodyStream => HttpRequest.Body;
 
         private string _bodyContent;
         public string BodyContent
@@ -42,7 +43,7 @@ namespace Agile.AServer
                     return _bodyContent;
                 }
 
-                using (var readStream = new StreamReader(Body, Encoding.UTF8))
+                using (var readStream = new StreamReader(BodyStream, Encoding.UTF8))
                 {
                     _bodyContent = readStream.ReadToEnd();
                 }
@@ -51,6 +52,17 @@ namespace Agile.AServer
             }
         }
 
+        public T Body<T>()
+        {
+            if (string.IsNullOrEmpty(BodyContent))
+            {
+                return default(T);
+            }
+
+            T obj = JsonConvert.DeserializeObject<T>(BodyContent);
+
+            return obj;
+        }
         private dynamic DynamicHeader()
         {
             if (HttpRequest == null)
