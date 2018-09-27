@@ -48,8 +48,8 @@ namespace Agile.AServer.MockServer
                             .EnableCors(new CorsOption()
                             {
                                 AccessControlAllowOrigins = "*",
-                                AccessControlAllowHeaders = "auth",
-                                AccessControlAllowMethods = "GET,POST,PUT,DELETE"
+                                AccessControlAllowHeaders = "*",
+                                AccessControlAllowMethods = "*"
                             });
                         //解析apis
                         foreach (dynamic apiDesc in dynamicMockObj.apis)
@@ -61,7 +61,6 @@ namespace Agile.AServer.MockServer
                             var dictHeader = apiDesc.response.headers as JObject;
                             if (dictHeader != null)
                             {
-                                
                                 foreach (var property in dictHeader.Properties())
                                 {
                                     var value = dictHeader.GetValue(property.Name).ToString();
