@@ -21,3 +21,7 @@ server.AddHandler(new HttpHandler()
                     });
  //通过AddHandler方法添加一个对请求的响应
 ```
+step 3:  
+```
+server.Run();
+```
