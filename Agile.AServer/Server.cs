@@ -66,19 +66,22 @@ namespace Agile.AServer
 
         public Task Run()
         {
+            String urlStr = String.Format("http://{0}:{1}", _ip, _port);
             Host =
-                new WebHostBuilder()
-                    .UseKestrel(op =>
-                    {
-                        if (_ip.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            op.ListenLocalhost(_port);
-                        }
-                        else
-                        {
-                            op.Listen(IPAddress.Parse(_ip), _port);
-                        }
-                    })
+                 new WebHostBuilder()
+                    // .UseKestrel(op =>
+                    // {
+                    //     if (_ip.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
+                    //     {
+                    //         op.ListenLocalhost(_port);
+                    //     }
+                    //     else
+                    //     {
+                    //         op.Listen(IPAddress.Parse(_ip), _port);
+                    //     }
+                    // })
+                    .UseUrls(urlStr)
+                    .UseKestrel()
                     .Configure(app =>
                     {
                         app.Run(http =>
