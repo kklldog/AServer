@@ -6,7 +6,11 @@ namespace Agile.AServer.utils
 {
     class ConsoleUtil
     {
-        public static void WriteToConsole(string txt)
+        /// <summary>
+        /// 写到debug控制台
+        /// </summary>
+        /// <param name="txt"></param>
+        public static void DebugConsole(string txt)
         {
 #if DEBUG
             Console.WriteLine(txt);

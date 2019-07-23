@@ -22,6 +22,8 @@ namespace Agile.AServer
 
         IServer EnableCors(CorsOption option);
 
+        bool ShowLog { get; set; }
+
         Task Run();
 
         Task Stop();
@@ -37,6 +39,7 @@ namespace Agile.AServer
         private CorsOption _corsOption;
 
         public IWebHost Host { get; private set; }
+        public bool ShowLog { get; set; }
 
         public IServer SetPort(int port)
         {
@@ -62,7 +65,7 @@ namespace Agile.AServer
             return this;
         }
 
-       
+
 
         public Task Run()
         {
@@ -95,7 +98,7 @@ namespace Agile.AServer
                                 var path = req.Path;
 
                                 var cacheKey = $"Request:{method}-{path}";
-                                ConsoleUtil.WriteToConsole(cacheKey);
+                                ConsoleUtil.DebugConsole(cacheKey);
 
                                 //cors
                                 var corsResult = CorsHandler.Handler(_corsOption, http);
@@ -123,9 +126,9 @@ namespace Agile.AServer
                                     }
                                     catch (Exception e)
                                     {
-                                        ConsoleUtil.WriteToConsole(e.ToString());
+                                        Console.WriteLine(e.ToString());
                                         resp.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                        ConsoleUtil.WriteToConsole(
+                                        Console.WriteLine(
                                             $"Response:{resp.StatusCode} {HttpStatusCode.InternalServerError}");
 
                                         return resp.WriteAsync("InternalServerError");
@@ -133,7 +136,7 @@ namespace Agile.AServer
                                 }
 
                                 resp.StatusCode = (int)HttpStatusCode.NotFound;
-                                ConsoleUtil.WriteToConsole($"Response:{resp.StatusCode} {HttpStatusCode.NotFound}");
+                                Console.WriteLine($"Response:{resp.StatusCode} {HttpStatusCode.NotFound}");
 
                                 return resp.WriteAsync("NotFound");
                             });
@@ -142,7 +145,7 @@ namespace Agile.AServer
                     .Build();
             var task = Host.StartAsync();
 
-            ConsoleUtil.WriteToConsole($"AServer listening {_ip}:{_port} now .");
+            Console.WriteLine($"AServer listening {_ip}:{_port} now .");
 
             return task;
         }

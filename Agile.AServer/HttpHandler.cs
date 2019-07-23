@@ -132,7 +132,7 @@ namespace Agile.AServer
                 }
             });
 
-            ConsoleUtil.WriteToConsole($"Response:{HttpResponse.StatusCode} {statusCode}");
+            ConsoleUtil.DebugConsole($"Response:{HttpResponse.StatusCode} {statusCode}");
 
             return HttpResponse.WriteAsync(responseContent);
         }
