@@ -5,10 +5,10 @@
     <Authors>mj.zhou</Authors>
     <Product />
     <Description>just a http server</Description>
-    <AssemblyVersion>0.0.0.1</AssemblyVersion>
-    <FileVersion>0.0.0.1</FileVersion>
+    <AssemblyVersion>0.0.0.2</AssemblyVersion>
+    <FileVersion>0.0.0.2</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <PackageProjectUrl>https://github.com/kklldog/AServer</PackageProjectUrl>
   </PropertyGroup>
 
