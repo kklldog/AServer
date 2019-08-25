@@ -18,7 +18,7 @@ namespace Agile.AServer
             foreach (var methodInfo in methods)
             {
                 var attr = methodInfo.GetCustomAttribute(typeof(HttpHandlerAttribute));
-                if (attr is HttpHandlerAttribute && methodInfo.GetParameters().Length == 2 && methodInfo.ReturnType == typeof(Task))
+                if (attr is HttpHandlerAttribute && CheckHandlerParam(methodInfo.GetParameters()) && methodInfo.ReturnType == typeof(Task))
                 {
                     var httpHandlerAttr = attr as HttpHandlerAttribute;
                     //找出具有httphandler attribute的方法
@@ -42,6 +42,15 @@ namespace Agile.AServer
                     server.AddHandler(handler);
                 }
             }
+        }
+
+
+        private static bool CheckHandlerParam(ParameterInfo[] pInfo)
+        {
+            if (pInfo.Length != 2) return false;
+            if (pInfo[0].ParameterType != typeof(Request)) return false;
+            if (pInfo[1].ParameterType != typeof(Response)) return false;
+            return true;
         }
     }
 }
