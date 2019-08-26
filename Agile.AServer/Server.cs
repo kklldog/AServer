@@ -110,7 +110,7 @@ namespace Agile.AServer
                                 if (handler == null)
                                 {
                                     handler = _handlers.FirstOrDefault(
-                                        h => h.Method == method && PathUtil.IsMatch(path, h.Path));
+                                        h => h.Method.Equals(method,StringComparison.OrdinalIgnoreCase) && PathUtil.IsMatch(path, h.Path));
                                     if (handler != null)
                                     {
                                         _handlersCache.TryAdd(cacheKey, handler);
