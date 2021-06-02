@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agile.AServer", "Agile.AServer\Agile.AServer.csproj", "{7B33D692-3904-4DE1-AC65-1C2B4A84FE5C}"
 EndProject
@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AServer.Test.Server", "ASer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agile.AServer.MockServer", "Agile.AServer.MockServer\Agile.AServer.MockServer.csproj", "{2D4EDACF-A83F-43A1-BBFA-BB4E4AED8459}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AServer.Test.TestCases", "AServer.Test.TestCases\AServer.Test.TestCases.csproj", "{F71FBAF9-45F1-44AA-91B9-82FDA94457C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AServer.Test.TestCases", "AServer.Test.TestCases\AServer.Test.TestCases.csproj", "{F71FBAF9-45F1-44AA-91B9-82FDA94457C7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_test", "_test", "{D9783ADA-F2F3-4815-A2EC-012A5943AD3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AServer.Test.ServerNT31", "AServer.Test.ServerNT31\AServer.Test.ServerNT31.csproj", "{8FA11F81-A025-44FC-BAF4-681B3165BA42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{F71FBAF9-45F1-44AA-91B9-82FDA94457C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F71FBAF9-45F1-44AA-91B9-82FDA94457C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F71FBAF9-45F1-44AA-91B9-82FDA94457C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FA11F81-A025-44FC-BAF4-681B3165BA42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FA11F81-A025-44FC-BAF4-681B3165BA42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FA11F81-A025-44FC-BAF4-681B3165BA42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FA11F81-A025-44FC-BAF4-681B3165BA42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +48,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A324A17E-1768-4103-A0B4-34413930B7CD} = {D9783ADA-F2F3-4815-A2EC-012A5943AD3D}
 		{F71FBAF9-45F1-44AA-91B9-82FDA94457C7} = {D9783ADA-F2F3-4815-A2EC-012A5943AD3D}
+		{8FA11F81-A025-44FC-BAF4-681B3165BA42} = {D9783ADA-F2F3-4815-A2EC-012A5943AD3D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAE110EC-A05A-45F5-A842-0B9A84014BC0}
