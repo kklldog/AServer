@@ -15,7 +15,8 @@ namespace AServer.Test.Server
             Task.Run(async () =>
             {
                 var server = new Agile.AServer.Server();
-                server.EnableCors(new CorsOption() {
+                server.EnableCors(new CorsOption()
+                {
                     AccessControlAllowOrigins = "http://localhost:5000",
                     AccessControlAllowHeaders = "auth",
                     AccessControlAllowMethods = "GET,POST,PUT,DELETE"
@@ -88,7 +89,8 @@ namespace AServer.Test.Server
                             throw new Exception("ex");
                         }
                     })
-                    .AddController<ApiController>();
+                    .AddController<ApiController>()
+                    ;
                 await server.Run();
             });
 

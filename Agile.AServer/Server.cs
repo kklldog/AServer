@@ -22,7 +22,7 @@ namespace Agile.AServer
 
         IServer EnableCors(CorsOption option);
 
-        bool ShowLog { get; set; }
+        IServer SetLinstenUrls(params string[] url);
 
         Task Run();
 
@@ -34,12 +34,12 @@ namespace Agile.AServer
         private static object _lockObj = new object();
         private readonly List<HttpHandler> _handlers = new List<HttpHandler>();
         private readonly ConcurrentDictionary<string, HttpHandler> _handlersCache = new ConcurrentDictionary<string, HttpHandler>();
+        private string[] _urls = new string[] { };
         private int _port = 5000;
         private string _ip = "localhost";
         private CorsOption _corsOption;
 
         public IWebHost Host { get; private set; }
-        public bool ShowLog { get; set; }
 
         public IServer SetPort(int port)
         {
@@ -69,21 +69,20 @@ namespace Agile.AServer
 
         public Task Run()
         {
-            String urlStr = String.Format("http://{0}:{1}", _ip, _port);
+            string url = String.Format("http://{0}:{1}", _ip, _port);
+            var urls = new List<string>();
+            if (!_urls.Any())
+            {
+                urls.Add(url);
+            }
+            else
+            {
+                urls = _urls.ToList();
+            }
+
             Host =
                  new WebHostBuilder()
-                    // .UseKestrel(op =>
-                    // {
-                    //     if (_ip.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
-                    //     {
-                    //         op.ListenLocalhost(_port);
-                    //     }
-                    //     else
-                    //     {
-                    //         op.Listen(IPAddress.Parse(_ip), _port);
-                    //     }
-                    // })
-                    .UseUrls(urlStr)
+                    .UseUrls(urls.ToArray())
                     .UseKestrel()
                     .Configure(app =>
                     {
@@ -145,7 +144,10 @@ namespace Agile.AServer
                     .Build();
             var task = Host.StartAsync();
 
-            Console.WriteLine($"AServer listening {_ip}:{_port} now .");
+            urls.ForEach(u =>
+            {
+                Console.WriteLine($"AServer listen on {u} .");
+            });
 
             return task;
         }
@@ -190,6 +192,17 @@ namespace Agile.AServer
         public Task Stop()
         {
             return Host?.StopAsync();
+        }
+
+        /// <summary>
+        /// 如果设置了listen urls则ip，port不起作用。
+        /// </summary>
+        /// <param name="urls"></param>
+        /// <returns></returns>
+        public IServer SetLinstenUrls(params string[] urls)
+        {
+            this._urls = urls ?? throw new ArgumentNullException("urls");
+            return this;
         }
     }
 }
