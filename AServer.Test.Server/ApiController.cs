@@ -51,30 +51,30 @@ namespace AServer.Test.Server
         }
 
         [HttpHandler("/api/cars","POST")]
-        public Task AddCar(Request req, Response resp)
+        public async Task AddCar(Request req, Response resp)
         {
-            var car = req.Body<car>();
+            var car = await req.Body<car>();
             //mock return id
             var json = JsonConvert.SerializeObject(car);
-            return resp.WriteJson(json);
+            await resp.WriteJson(json);
         }
 
         [HttpHandler("/api/cars/001", "PUT")]
-        public Task UpdateCar(Request req, Response resp)
+        public async Task UpdateCar(Request req, Response resp)
         {
-            var car = req.Body<car>();
+            var car = await req.Body<car>();
             //mock return id
             var json = JsonConvert.SerializeObject(car);
-            return resp.WriteJson(json);
+            await resp.WriteJson(json);
         }
 
         [HttpHandler("/api/cars/001","DELETE")]
-        public Task DeleteCar(Request req, Response resp)
+        public async Task DeleteCar(Request req, Response resp)
         {
             //delete car
             //...
 
-            return resp.WriteJson("ok");
+            await resp.WriteJson("ok");
         }
     }
 }

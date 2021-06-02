@@ -34,32 +34,31 @@ namespace Agile.AServer
         public Stream BodyStream => HttpRequest.Body;
 
         private string _bodyContent;
-        public string BodyContent
+
+        public async Task<string> ReadBodyContent()
         {
-            get
+            if (!string.IsNullOrEmpty(_bodyContent))
             {
-                if (!string.IsNullOrEmpty(_bodyContent))
-                {
-                    return _bodyContent;
-                }
-
-                using (var readStream = new StreamReader(BodyStream, Encoding.UTF8))
-                {
-                    _bodyContent = readStream.ReadToEnd();
-                }
-
                 return _bodyContent;
             }
+
+            using (var readStream = new StreamReader(BodyStream, Encoding.UTF8))
+            {
+                _bodyContent = await readStream.ReadToEndAsync();
+            }
+
+            return _bodyContent;
         }
 
-        public T Body<T>()
+        public async Task<T> Body<T>()
         {
-            if (string.IsNullOrEmpty(BodyContent))
+            var body = await ReadBodyContent();
+            if (string.IsNullOrEmpty(body))
             {
                 return default(T);
             }
 
-            T obj = JsonConvert.DeserializeObject<T>(BodyContent);
+            T obj = JsonConvert.DeserializeObject<T>(body);
 
             return obj;
         }
